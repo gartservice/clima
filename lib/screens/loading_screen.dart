@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:clima/services/location.dart';
 import 'package:clima/services/networking.dart';
+import 'package:clima/screens/location_screen.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 const apiKey = '454a189d6437929fb747902023850ab5';
 class LoadingScreen extends StatefulWidget {
+
+
   @override
   _LoadingScreenState createState() => _LoadingScreenState();
 }
@@ -21,18 +25,18 @@ class _LoadingScreenState extends State<LoadingScreen> {
     await location.getCurrentLocation();
     latitude = location.latitude;
     longitude = location.longitude;
-    NetworkHelper networkHelper = NetworkHelper('https://api.openweathermap.org/data/2.5/weather?lat=$latitude&lon=$longitude&appid=$apiKey');
-    var data = await networkHelper.getData();
+    NetworkHelper networkHelper = NetworkHelper('https://api.openweathermap.org/data/2.5/weather?lat=$latitude&lon=$longitude&appid=$apiKey&units=metric');
+    var decodedJson = await networkHelper.getData();
     // if(data){
-      print(data['main']['temp']);
+      print(decodedJson['main']['temp']);
     // }
-    // var longitude = decodedJson['coord']['lon'];
-    // var latitude = decodedJson['coord']['lon'];
-    // var cityName = decodedJson['name'];
-    // var temperature = jsonDecode(data)['main']['temp'];
+    //
     // print(url);
     // print('city name = $cityName , $temperature');
     // print(longitude);
+    Navigator.push(context,MaterialPageRoute(builder: (context) {
+      return LocationScreen(locationWeather: decodedJson);
+    }));
   }
 
 
@@ -40,12 +44,9 @@ class _LoadingScreenState extends State<LoadingScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: ElevatedButton(
-          onPressed: () {
-            getLocationData();
-            //Get the current location
-          },
-          child: Text('Get'),
+        child: SpinKitDoubleBounce(
+          color:Colors.white,
+          size: 100.0,
         ),
       ),
     );
