@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:clima/utilities/constants.dart';
-
+import 'package:clima/services/weather.dart';
 class LocationScreen extends StatefulWidget {
   LocationScreen({this.locationWeather});
   final locationWeather;
@@ -9,9 +9,12 @@ class LocationScreen extends StatefulWidget {
 }
 
 class _LocationScreenState extends State<LocationScreen> {
-  int? temperature;
-  int? condition;
-  String? cityName;
+  WeatherModel weather = WeatherModel();
+  late int temperature;
+  late String weatherIcon;
+  late String message;
+  late int condition;
+  late String cityName;
   @override
   void initState(){
     super.initState();
@@ -19,12 +22,13 @@ class _LocationScreenState extends State<LocationScreen> {
 
   }
   void updateUI(dynamic weatherData){
-
-     condition = weatherData['weather'][0]['id'];
-     cityName = weatherData['name'];
-     double temp = weatherData['main']['temp'];
-     temperature = temp.toInt();
-     print(temperature);
+    cityName = weatherData['name'];
+    double temp = weatherData['main']['temp'];
+    temperature = temp.toInt();
+    print(temperature);
+    var condition = weatherData['weather'][0]['id'];
+    weatherIcon = weather.getWeatherIcon(condition);
+    message = weather.getMessage(temperature.toInt());
   }
   Widget build(BuildContext context) {
     return Scaffold(
@@ -71,7 +75,7 @@ class _LocationScreenState extends State<LocationScreen> {
                       style: kTempTextStyle,
                     ),
                     Text(
-                      '☀️',
+                      weatherIcon,
                       style: kConditionTextStyle,
                     ),
                   ],
@@ -80,7 +84,8 @@ class _LocationScreenState extends State<LocationScreen> {
               Padding(
                 padding: EdgeInsets.only(right: 15.0),
                 child: Text(
-                  "It's 🍦 time in San Francisco!",
+                  message+' in '+cityName,
+                  // "It's 🍦 time in San Francisco!",
                   textAlign: TextAlign.right,
                   style: kMessageTextStyle,
                 ),
