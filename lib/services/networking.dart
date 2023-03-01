@@ -15,7 +15,6 @@ class NetworkHelper {
     } else {
       print(response.statusCode);
       return false;
-      print(url);
     }
   }
 }
